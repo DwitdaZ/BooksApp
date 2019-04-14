@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import './App.css';
 // import { GetAllBooks } from '../server';
 import AddBookModal from './ui/modal/AddBook';
+import EditBookModal from './ui/modal/EditBook';
+import DeleteBookModal from './ui/modal/DeleteBook';
 import BookTable from './ui/table/BookTable';
 
 const testDefault = [
@@ -29,9 +31,10 @@ class App extends Component {
       description: '',
       author: ''
     },
-    modalIsOpen: false,
-    addingBook: false,
-    editingBook: false,
+    addModalIsOpen: false,
+    deleteModalIsOpen: false,
+    showDeleteBtn: true,
+    editModalIsOpen: false,
   };
 
   // async componentDidMount() {
@@ -49,7 +52,6 @@ class App extends Component {
     const key = target.name;
     const val = target.value;
     let price, dollars, cents;
-
     if (key !== 'dollars' && key !== 'cents') {
       this.setState({ 
         book : {
@@ -80,8 +82,13 @@ class App extends Component {
     }
   }
 
-  editBookHandler = evt => {
+  editBookHandler = (book, evt) => {
     evt.preventDefault();
+    let books = [...this.state.books];
+    this.setState({
+      editModalIsOpen: !this.state.editModalIsOpen,
+      books: books.map(b => ( b.id === book.id ? {...book} : b ))
+    });
     console.log("book updated")
   }
 
@@ -96,39 +103,86 @@ class App extends Component {
     books.push(book);
     this.setState({
       books,
-      modalIsOpen: !this.state.modalIsOpen
+      addModalIsOpen: !this.state.addModalIsOpen
     })
     console.log("new book added", this.state.book)
   }
 
   deleteBookHandler = evt => {
     evt.preventDefault();
+    this.setState(prevState => ({
+      deleteModalIsOpen: !prevState.deleteModalIsOpen,
+      showDeleteBtn: !prevState.showDeleteBtn
+    }));
     console.log("book deleted")
   }
 
-  toggleModalHandler = evt => {
+  toggleAddModalHandler = evt => {
+    evt.preventDefault();
     this.setState(prevState => ({
-      modalIsOpen: !prevState.modalIsOpen,
-      addingBook: !prevState.addingBook
+      addModalIsOpen: !prevState.addModalIsOpen,
     }));
   }
 
+  toggleEditModalHandler = (book, evt) => {
+    if (!this.state.editModalIsOpen) {
+      this.setState(prevState => ({
+        editModalIsOpen: !prevState.editModalIsOpen,
+        book
+      }));
+    }
+  }
+
+  toggleDeleteModalHandler = evt => {
+    evt.preventDefault();
+    if (!this.state.deleteModalIsOpen) (
+      this.setState(prevState => ({
+        deleteModalIsOpen: !prevState.deleteModalIsOpen
+      }))
+    ) 
+    else if (this.state.deleteModalIsOpen && !this.state.showDeleteBtn) (
+      this.setState(prevState => ({
+        deleteModalIsOpen: !prevState.deleteModalIsOpen,
+        showDeleteBtn: true
+      }))
+    )
+    else if (this.state.deleteModalIsOpen && this.state.showDeleteBtn) {
+      this.setState(prevState => ({
+        deleteModalIsOpen: !prevState.deleteModalIsOpen
+      }))
+    }
+  }
+
   render() {
-    const { books } = this.state;
-    console.log("render: ",books);
+    // const { books } = this.state;
+    // console.log("render: ",books);
     return (
       <div className="App container">
-        <AddBookModal 
-          modalState={this.state.modalIsOpen}
-          changed={this.handleChange}
-          exitModal={this.toggleModalHandler}
-          addBook={this.addBookHandler}
-        />
         <header className="App-header">
+          <AddBookModal 
+            modalState={this.state.addModalIsOpen}
+            changed={this.handleChange}
+            toggleAddModal={this.toggleAddModalHandler}
+            addBook={this.addBookHandler}
+          />
+          <EditBookModal
+            {...this.state}
+            modalState={this.state.editModalIsOpen}
+            changed={this.handleChange}
+            toggleEditModal={this.toggleEditModalHandler}
+            editBook={this.editBookHandler}
+          />
+          <DeleteBookModal 
+            modalState={this.state.deleteModalIsOpen}
+            toggleDeleteModal={this.toggleDeleteModalHandler}
+            deleteBook={this.deleteBookHandler}
+            confirmRemoval={() => this.setState({ showDeleteBtn: false })}
+            showDelete={this.state.showDeleteBtn}
+          />
           <BookTable 
             {...this.state}
-            editBook={this.editBookHandler}
-            deleteBook={this.deleteBookHandler}
+            toggleEditModal={this.toggleEditModalHandler}
+            toggleDeleteModal={this.toggleDeleteModalHandler}
           />
         </header>
       </div>

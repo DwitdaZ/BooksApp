@@ -37,14 +37,14 @@ const bookTable = props => {
                         color="success" 
                         size="sm" 
                         className="mx-1"
-                        onClick={props.editBook}
+                        onClick={props.toggleEditModal.bind(this, book)}
                     >Edit
                     </Button>
                     <Button 
                         color="danger" 
                         size="sm" 
                         className="mx-1"
-                        onClick={props.deleteBook}
+                        onClick={props.toggleDeleteModal}
                     >Delete
                     </Button>
                   </td>
