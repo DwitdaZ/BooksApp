@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 
-import './App.css';
 // import { GetAllBooks } from '../server';
 import AddBookModal from './ui/modal/AddBook';
 import EditBookModal from './ui/modal/EditBook';
 import DeleteBookModal from './ui/modal/DeleteBook';
 import BookTable from './ui/table/BookTable';
+import ContainerBar from './ui/navigation/ContainerBar';
+
 
 const testDefault = [
   {
@@ -157,8 +158,10 @@ class App extends Component {
     // const { books } = this.state;
     // console.log("render: ",books);
     return (
-      <div className="App container">
-        <header className="App-header">
+      <div className="App">
+        <header className="App-header container mt-5">
+          <ContainerBar className="mt-5" toggleAdd={this.toggleAddModalHandler} />
+
           <AddBookModal 
             modalState={this.state.addModalIsOpen}
             changed={this.handleChange}

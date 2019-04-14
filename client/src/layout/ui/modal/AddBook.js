@@ -15,10 +15,10 @@ import {
     InputGroupAddon
 } from 'reactstrap';
 
+
 const addBookModal = props => {
     return (
         <Fragment>
-            <Button color="primary" onClick={props.toggleAddModal}>Add A New Book</Button>
             <Modal isOpen={props.modalState} toggle={props.toggleAddModal} backdrop="static">
                 <ModalHeader toggle={props.toggleAddModal}>Add Book</ModalHeader>
                 <ModalBody>

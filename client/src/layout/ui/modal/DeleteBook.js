@@ -6,7 +6,8 @@ import {
     ModalBody,
     ModalFooter,
     Button,
-    Alert
+    Alert,
+    Fade
 } from 'reactstrap';
 
 
@@ -18,12 +19,13 @@ const deleteBook = props => {
                 <ModalHeader toggle={props.toggleDeleteModal}>Delete Book</ModalHeader>
                 <ModalBody>
                     <Alert color="danger">
-                        <span>This action will <strong>permanently remove</strong> <em>{title}</em> from the list.</span><br/>
+                        <span>This action will <strong>permanently remove</strong> <br/>
+                        <em>"{title}"</em> from the list.</span><br/><br/>
                         <span>Click <Button color="success" size="sm" disabled>Yes</Button> if you would like to proceed?</span>
-                        <div hidden={props.showDelete}>
+                        <Fade in={!props.showDelete} hidden={props.showDelete}>
                             <hr/>
                             <Button color="danger" onClick={props.deleteBook.bind(this, props.book)}>Delete</Button>
-                        </div>
+                        </Fade>
                     </Alert>
                 </ModalBody>
                 <ModalFooter>
