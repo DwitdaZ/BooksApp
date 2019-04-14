@@ -44,7 +44,7 @@ const bookTable = props => {
                         color="danger" 
                         size="sm" 
                         className="mx-1"
-                        onClick={props.toggleDeleteModal}
+                        onClick={props.toggleDeleteModal.bind(this, book)}
                     >Delete
                     </Button>
                   </td>

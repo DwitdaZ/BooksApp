@@ -17,7 +17,6 @@ import {
 
 
 const editBook = props => {
-    // console.log(props)
     const { title, genre, publication_date: date, price, description, author } = props.book;
     const money = price.split('.');
     const dollars = money[0];

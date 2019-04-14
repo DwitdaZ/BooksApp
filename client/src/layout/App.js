@@ -108,11 +108,11 @@ class App extends Component {
     console.log("new book added", this.state.book)
   }
 
-  deleteBookHandler = evt => {
-    evt.preventDefault();
+  deleteBookHandler = (book) => {
     this.setState(prevState => ({
       deleteModalIsOpen: !prevState.deleteModalIsOpen,
-      showDeleteBtn: !prevState.showDeleteBtn
+      showDeleteBtn: !prevState.showDeleteBtn,
+      books: prevState.books.filter( b => b !== book )
     }));
     console.log("book deleted")
   }
@@ -133,11 +133,11 @@ class App extends Component {
     }
   }
 
-  toggleDeleteModalHandler = evt => {
-    evt.preventDefault();
+  toggleDeleteModalHandler = (book, evt) => {
     if (!this.state.deleteModalIsOpen) (
       this.setState(prevState => ({
-        deleteModalIsOpen: !prevState.deleteModalIsOpen
+        deleteModalIsOpen: !prevState.deleteModalIsOpen,
+        book
       }))
     ) 
     else if (this.state.deleteModalIsOpen && !this.state.showDeleteBtn) (
@@ -173,6 +173,7 @@ class App extends Component {
             editBook={this.editBookHandler}
           />
           <DeleteBookModal 
+            {...this.state}
             modalState={this.state.deleteModalIsOpen}
             toggleDeleteModal={this.toggleDeleteModalHandler}
             deleteBook={this.deleteBookHandler}
