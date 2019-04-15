@@ -25,15 +25,15 @@ const addBookModal = props => {
                     <Form>
                         <FormGroup>
                             <Label for="title">Title</Label>
-                            <Input id="title" name="title" onChange={props.changed} />
+                            <Input id="title" name="Title" onChange={props.changed} />
                         </FormGroup>
                         <FormGroup>
-                            <Label for="author">Author</Label>
-                            <Input id="author" name="author" onChange={props.changed} />
+                            <Label for="author">Author Id</Label>
+                            <Input id="author" name="Author_Id" onChange={props.changed} />
                         </FormGroup>
                         <FormGroup>
                             <Label for="genre">Genre</Label>
-                            <Input id="genre" name="genre" onChange={props.changed} />
+                            <Input id="genre" name="Genre" onChange={props.changed} />
                         </FormGroup>
                         <Row>
                             <Col md={6}>
@@ -51,7 +51,7 @@ const addBookModal = props => {
                                     <Label for="publication">Publication Date</Label>
                                     <Input
                                         type="date"
-                                        name="publication_date"
+                                        name="Publication_Date"
                                         id="publication"
                                         placeholder="date placeholder" 
                                         onChange={props.changed}
@@ -61,7 +61,7 @@ const addBookModal = props => {
                         </Row>
                         <FormGroup>
                             <Label for="description">Description</Label>
-                            <Input type="textarea" name="description" id="description" onChange={props.changed} />
+                            <Input type="textarea" name="Description" id="description" onChange={props.changed} />
                         </FormGroup>
                     </Form>
                 </ModalBody>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
-// import { GetAllBooks } from '../server';
+//import { GetAllBooks } from '../server';
 import AddBookModal from './ui/modal/AddBook';
 import EditBookModal from './ui/modal/EditBook';
 import DeleteBookModal from './ui/modal/DeleteBook';
@@ -8,29 +9,17 @@ import BookTable from './ui/table/BookTable';
 import ContainerBar from './ui/navigation/ContainerBar';
 
 
-const testDefault = [
-  {
-    id: 1,
-    title: 'Some Title',
-    genre: 'Horror',
-    publication_date: '4/11/2019',
-    price: '15.00',
-    description: 'This is the books description',
-    author: 'Darris Cooper'
-  }
-]
-
 class App extends Component {
   state = {
     books: [],
     book: {
-      id: 0,
-      title: '',
-      genre: '',
-      publication_date: '',
-      price: '0.00',
-      description: '',
-      author: ''
+      Book_Id: 0,
+      Title: '',
+      Genre: '',
+      Publication_Date: '',
+      Price: '0.00',
+      Description: '',
+      Author_Id: ''
     },
     addModalIsOpen: false,
     deleteModalIsOpen: false,
@@ -38,16 +27,27 @@ class App extends Component {
     editModalIsOpen: false,
   };
 
+
+  componentDidMount(){
+    let date;
+    axios.get("http://localhost:3000/api/Books")
+    .then( ({ data }) => {
+      data.map(book => {
+        date = new Date(book.Publication_Date);
+        book.Publication_Date = date.toLocaleDateString('en-US');
+        return book.Publication_Date
+      });
+      this.setState({ books: data });
+    })
+    .catch(err => console.log(err))
+  }
+
   // async componentDidMount() {
   //     const books = await GetAllBooks();
   //     console.log("cdm: ", books);
 
   //   this.setState({ books });
   // };
-
-  componentDidMount() {
-    this.setState({ books: testDefault });
-  }
 
   handleChange = ({ target }) => {
     const key = target.name;
@@ -61,7 +61,7 @@ class App extends Component {
         }
       });
     } else {
-      price = this.state.book.price.split('.');
+      price = this.state.book.Price.split('.');
       dollars = price[0];
       cents = price[1];
 
@@ -77,7 +77,7 @@ class App extends Component {
       this.setState({
         book : {
           ...this.state.book,
-          "price": `${dollars}.${cents}`
+          "Price": `${dollars}.${cents}`
         }
        });
     }
@@ -86,27 +86,35 @@ class App extends Component {
   editBookHandler = (book, evt) => {
     evt.preventDefault();
     let books = [...this.state.books];
-    this.setState({
-      editModalIsOpen: !this.state.editModalIsOpen,
-      books: books.map(b => ( b.id === book.id ? {...book} : b ))
-    });
-    console.log("book updated")
+    axios.put(`http//localhost:3000/api/Books/${book.Book_Id}`, book)
+    .then( ({ data }) => {
+      console.log(data);
+      this.setState({
+        editModalIsOpen: !this.state.editModalIsOpen,
+        books: books.map(b => ( b.id === book.id ? {...book} : b ))
+      });
+    })
+    .catch(err => console.log(err));
   }
 
   addBookHandler = evt => {
     evt.preventDefault();
-    let book = {...this.state.book};
-    let id = this.state.books.length + 1;
-    let books = [...this.state.books];
-    let date = new Date(this.state.book.publication_date);
-    book.id = id++;
-    book.publication_date = date.toLocaleDateString();
-    books.push(book);
-    this.setState({
-      books,
-      addModalIsOpen: !this.state.addModalIsOpen
+    let { book, books } = this.state;
+    const post = {...book};
+    delete post["Book_Id"];
+    post.Publication_Date = post.Publication_Date.toISOString();
+
+    axios.post("http://localhost:3000/api/Books", post)
+    .then(resp => {
+      console.log(resp.data)
+      books.push(post);
+      this.setState({ 
+        books, 
+        addModalIsOpen: !this.state.addModalIsOpen,
+        book: this.state.book.map(el => el = '')
+      })
     })
-    console.log("new book added", this.state.book)
+    .catch(err => console.log(err))
   }
 
   deleteBookHandler = (book) => {

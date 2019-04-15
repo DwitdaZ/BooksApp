@@ -7,7 +7,7 @@ const bookTable = props => {
     return (
         <Table bordered hover>
             <thead>
-              <tr>
+              <tr className="text-center">
                 <th>ID</th>
                 <th>Title</th>
                 <th>Genre</th>
@@ -21,29 +21,29 @@ const bookTable = props => {
             <tbody>
               {books.map(book => {
                 const { 
-                  id, title, genre, publication_date, price, description, author 
+                  Book_Id: id, Title, Genre, Publication_Date, Price, Description, Author_Id 
                 } = book;
                 return (
                 <tr key={id}>
-                  <th scope="row">{id}</th>
-                  <td>{title}</td>
-                  <td>{genre}</td>
-                  <td>{publication_date}</td>
-                  <td>{price}</td>
-                  <td>{description}</td>
-                  <td>{author}</td>
+                  <th className="text-center" scope="row">{id}</th>
+                  <td>{Title}</td>
+                  <td className="text-center">{Genre}</td>
+                  <td className="text-center">{Publication_Date}</td>
+                  <td className="text-center">{Price}</td>
+                  <td>{Description}</td>
+                  <td className="text-center">{Author_Id}</td>
                   <td>
                     <Button 
                         color="success" 
                         size="sm" 
-                        className="mx-1"
+                        className="m-1 btn-block"
                         onClick={props.toggleEditModal.bind(this, book)}
                     >Edit
                     </Button>
                     <Button 
                         color="danger" 
                         size="sm" 
-                        className="mx-1"
+                        className="m-1 btn-block"
                         onClick={props.toggleDeleteModal.bind(this, book)}
                     >Delete
                     </Button>

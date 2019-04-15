@@ -2,7 +2,7 @@ import React from 'react';
 
 import {
     Button,
-    Collapse,
+    // Collapse,
     Navbar,
     NavbarBrand,
     Nav, NavItem,
@@ -16,7 +16,7 @@ const containerBar = props => {
     return (
         <Navbar color="secondary" dark expand="md">
           <NavbarBrand className="ml-5" href="void(0)"><strong>Books R Us</strong></NavbarBrand>
-          <Collapse isOpen="true" navbar>
+          {/* <Collapse isOpen="true" navbar> */}
             <Nav className="ml-auto" navbar>
                 <UncontrolledDropdown nav inNavbar className="mx-5">
                     <DropdownToggle nav caret>
@@ -41,7 +41,7 @@ const containerBar = props => {
                     <Button color="primary" onClick={props.toggleAdd}>Add A New Book</Button>
                 </NavItem>
             </Nav>
-          </Collapse>
+          {/* </Collapse> */}
         </Navbar>
     );
 }
