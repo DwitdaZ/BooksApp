@@ -18,20 +18,19 @@ import {
 
 const editBook = props => {
     const { Title, Genre, Publication_Date: date, Price, Description, Author_Id } = props.book;
-    console.log(props.book)
     const money = Price.toLocaleString().split('.');
     const dollars = money[0];
     const cents = money[1];
 
-    // const formatDate = date.split('/');
-    // let mth = formatDate[0];
-    // if (mth < 10)
-    //     mth = `0${mth}`;
-    // let day = formatDate[1];
-    // if (day < 10)
-    //     day = `0${day}`;
-    // const year = formatDate[2];
-    //let localDate = new Date(date);
+    const formatDate = date.split('/');
+    let mth = formatDate[0];
+    if (mth < 10)
+        mth = `0${mth}`;
+    let day = formatDate[1];
+    if (day < 10)
+        day = `0${day}`;
+    const year = formatDate[2];
+    let localDate = `${year}-${mth}-${day}`;
 
     return(
         <Fragment>
@@ -70,7 +69,7 @@ const editBook = props => {
                                         name="Publication_Date"
                                         id="publication"
                                         placeholder="date placeholder"
-                                        value={date} 
+                                        value={localDate} 
                                         onChange={props.changed}
                                     />
                                 </FormGroup>

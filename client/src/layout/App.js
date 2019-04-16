@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 
-//import { GetAllBooks } from '../server';
+import { GetAllBooks, EditBook, AddBook, RemoveBook } from '../server';
 import AddBookModal from './ui/modal/AddBook';
 import EditBookModal from './ui/modal/EditBook';
 import DeleteBookModal from './ui/modal/DeleteBook';
@@ -28,42 +27,36 @@ class App extends Component {
   };
 
 
-  componentDidMount(){
-    let date;
-    axios.get("http://localhost:3000/api/Books")
-    .then( ({ data }) => {
-      data.map(book => {
-        date = new Date(book.Publication_Date);
-        book.Publication_Date = date.toLocaleDateString('en-US');
-        return book.Publication_Date
+  async componentDidMount() {
+    try {
+      const resp = await GetAllBooks();
+      if (!resp) throw Error(resp.statusText);
+      const books = await resp.data
+      let date;
+      books.map( book => {
+          date = new Date(book.Publication_Date);
+          book.Publication_Date = date.toLocaleDateString('en-US');
+          return book.Publication_Date
       });
-      this.setState({ books: data });
-    })
-    .catch(err => console.log(err))
-  }
+      this.setState({ books });
+    } catch (e) { console.log(e); }
+  };
 
-  // async componentDidMount() {
-  //     const books = await GetAllBooks();
-  //     console.log("cdm: ", books);
-
-  //   this.setState({ books });
-  // };
-
-  handleChange = ({ target }) => {
-    const key = target.name;
-    const val = target.value;
-    let price, dollars, cents;
+  handleChange = ({ target: { name: key, value: val } }) => {
     if (key !== 'dollars' && key !== 'cents') {
-      this.setState({ 
-        book : {
+      if (key === 'Publication_Date') {
+        let date = new Date(val);
+        val = date.toLocaleDateString('en-US');
+      }
+      this.setState({ book : {
           ...this.state.book,
           [key]: val
         }
       });
     } else {
-      price = this.state.book.Price.split('.');
-      dollars = price[0];
-      cents = price[1];
+      let price = this.state.book.Price.split('.');
+      let dollars = price[0];
+      let cents = price[1];
 
       if (key === 'dollars')
         dollars = val;
@@ -74,56 +67,65 @@ class App extends Component {
           cents = val;
       }
 
-      this.setState({
-        book : {
+      this.setState({ book : {
           ...this.state.book,
           "Price": `${dollars}.${cents}`
         }
-       });
-    }
+      });
+    };
   }
 
   editBookHandler = (book, evt) => {
     evt.preventDefault();
     let books = [...this.state.books];
-    axios.put(`http//localhost:3000/api/Books/${book.Book_Id}`, book)
-    .then( ({ data }) => {
-      console.log(data);
+    try {
+      ( async () => {
+      const resp = await EditBook(book.Book_Id, book);
+      if (!resp) throw Error(resp.statusText);
+      console.log(await resp.data);
       this.setState({
         editModalIsOpen: !this.state.editModalIsOpen,
-        books: books.map(b => ( b.id === book.id ? {...book} : b ))
+        books: books.map(b => ( b.id === book.Book_Id ? {...book} : b ))
       });
-    })
-    .catch(err => console.log(err));
+    })();
+    } catch(e) { console.log(e); }
   }
 
-  addBookHandler = evt => {
+  addBookHandler = (evt) => {
     evt.preventDefault();
     let { book, books } = this.state;
-    const post = {...book};
-    delete post["Book_Id"];
-    post.Publication_Date = post.Publication_Date.toISOString();
-
-    axios.post("http://localhost:3000/api/Books", post)
-    .then(resp => {
-      console.log(resp.data)
-      books.push(post);
-      this.setState({ 
-        books, 
-        addModalIsOpen: !this.state.addModalIsOpen,
-        book: this.state.book.map(el => el = '')
-      })
-    })
-    .catch(err => console.log(err))
+    try {
+      ( async () => {
+        const post = {...book};
+        delete post["Book_Id"];
+        let date = new Date(post.Publication_Date);
+        post.Publication_Date = date.toLocaleDateString();
+        const resp = await AddBook(post);
+        if (!resp) throw Error(resp.statusText);
+        console.log(await resp.data);
+        post["Book_Id"] = books[books.length-1].Book_Id+1;
+        books.push(post);
+        this.setState({ 
+          books, 
+          addModalIsOpen: !this.state.addModalIsOpen
+        });
+      })();
+    } catch(e) { console.log(e); }
   }
 
   deleteBookHandler = (book) => {
-    this.setState(prevState => ({
-      deleteModalIsOpen: !prevState.deleteModalIsOpen,
-      showDeleteBtn: !prevState.showDeleteBtn,
-      books: prevState.books.filter( b => b !== book )
-    }));
-    console.log("book deleted")
+    try {
+      ( async () => {
+        const resp = await RemoveBook(book.Book_Id);
+        if (!resp) throw Error(resp.statusText);
+        console.log(await resp.data);
+        this.setState(prevState => ({
+          deleteModalIsOpen: !prevState.deleteModalIsOpen,
+          showDeleteBtn: !prevState.showDeleteBtn,
+          books: prevState.books.filter( b => b !== book )
+        }));
+      })();
+    } catch(e) { console.log(e); }
   }
 
   toggleAddModalHandler = evt => {
@@ -138,6 +140,10 @@ class App extends Component {
       this.setState(prevState => ({
         editModalIsOpen: !prevState.editModalIsOpen,
         book
+      }));
+    } else {
+      this.setState(prevState => ({
+        editModalIsOpen: !prevState.editModalIsOpen,
       }));
     }
   }
@@ -163,8 +169,6 @@ class App extends Component {
   }
 
   render() {
-    // const { books } = this.state;
-    // console.log("render: ",books);
     return (
       <div className="App">
         <header className="App-header container mt-5">
