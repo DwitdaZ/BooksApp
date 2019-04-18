@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 import { GetAllBooks, EditBook, AddBook, RemoveBook } from '../server';
 import AddBookModal from './ui/modal/AddBook';
@@ -85,7 +85,7 @@ class App extends Component {
       console.log(await resp.data);
       this.setState({
         editModalIsOpen: !this.state.editModalIsOpen,
-        books: books.map(b => ( b.id === book.Book_Id ? {...book} : b ))
+        books: books.map(b => ( b.Book_Id === book.Book_Id ? {...book} : b ))
       });
     })();
     } catch(e) { console.log(e); }
@@ -170,8 +170,8 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <header className="App-header container mt-5">
+      <Fragment>
+        <header className="container mt-5">
           <ContainerBar className="mt-5" toggleAdd={this.toggleAddModalHandler} />
 
           <AddBookModal 
@@ -201,7 +201,7 @@ class App extends Component {
             toggleDeleteModal={this.toggleDeleteModalHandler}
           />
         </header>
-      </div>
+      </Fragment>
     );
   }
 }

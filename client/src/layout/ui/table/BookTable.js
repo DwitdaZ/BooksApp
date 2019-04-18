@@ -1,17 +1,41 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
-import { Table, Button } from 'reactstrap';
+import {
+  Toast, 
+  ToastBody, 
+  ToastHeader, 
+  Table, 
+  Button, 
+  Spinner 
+} from 'reactstrap';
 
 const bookTable = props => {
-    const { books } = props;
-    return (
-        <Table bordered hover>
+  const { books } = props;
+
+  return (
+    <Fragment>
+      { books.length === 0 || !books 
+      ? (
+        <div className="d-flex flex-row justify-content-center">
+          <div className="d-flex flex-column justify-content-center">
+            <Toast className="spinner-toast">
+              <ToastHeader icon={<Spinner size="lg" color="primary" />}>
+                Loading
+              </ToastHeader>
+              <ToastBody>
+                We are rounding you up some reading material — thanks for waiting!
+              </ToastBody>
+            </Toast>
+          </div>  
+        </div>  
+        )
+      : ( <Table bordered hover>
             <thead>
               <tr className="text-center">
                 <th>ID</th>
                 <th>Title</th>
                 <th>Genre</th>
-                <th>Publication Date</th>
+                <th>Publication<span style={{color:"white"}}>_</span>Date</th>
                 <th>Price</th>
                 <th>Description</th>
                 <th>Author</th>
@@ -53,7 +77,10 @@ const bookTable = props => {
               })}
             </tbody>
           </Table>
-    );
+        )
+      }
+    </Fragment>
+  );
 }
 
 export default bookTable;

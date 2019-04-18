@@ -7,8 +7,8 @@ export async function GetAllBooks() {
     return response;
 };
 
-export async function EditBook(data, id) {
-    const response = await axios.put(`${prefix}${id}`, data);  
+export async function EditBook(id, data) {
+    const response = await axios.put(`${prefix}/${id}`, data);  
     return response;
 };
 
@@ -18,6 +18,6 @@ export async function AddBook(data) {
 };
 
 export async function RemoveBook(id) {
-    const response = await axios.delete(`${prefix}${id}`);
+    const response = await axios.delete(`${prefix}/${id}`);
     return response;
 }
