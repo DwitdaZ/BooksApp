@@ -1,9 +1,23 @@
 import axios from 'axios';
 
-const host = 'http://localhost:63996';
+const prefix = 'http://localhost:3000/api/Books';
 
-export const GetAllBooks = async () => {
-    const { resp: data } = await axios.get(`${host}/api/Books`)
-    console.log("axios: ", data)
-    return data;
+export async function GetAllBooks() {
+    const response = await axios.get(prefix);
+    return response;
 };
+
+export async function EditBook(id, data) {
+    const response = await axios.put(`${prefix}/${id}`, data);  
+    return response;
+};
+
+export async function AddBook(data) {
+    const response = await axios.post(prefix, data);
+    return response;
+};
+
+export async function RemoveBook(id) {
+    const response = await axios.delete(`${prefix}/${id}`);
+    return response;
+}
